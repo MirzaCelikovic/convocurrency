@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Currency Converter</string>
+    <string name="all_currencies">ALL CURRENCIES</string>
+    <string name="service_unavailable">Service Temporary Unavailable Please Try Later</string>
+</resources>
