@@ -1,4 +1,4 @@
-package com.example.celik.convocurrency.ui
+package com.example.celik.convocurrency.ui.activities
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter

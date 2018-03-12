@@ -1,4 +1,4 @@
-package com.example.celik.convocurrency.ui
+package com.example.celik.convocurrency.ui.viewmodels
 
 import android.databinding.BaseObservable
 import android.databinding.Bindable
@@ -6,29 +6,30 @@ import android.view.View
 import com.example.celik.convocurrency.BR
 import com.example.celik.convocurrency.api.APIService
 import com.example.celik.convocurrency.api.ApiServiceGenerator
+import com.example.celik.convocurrency.ui.adapters.AllCurrenciesAdapter
+import com.example.celik.convocurrency.ui.fragments.ConvertCurrenciesFragment
 import com.example.celik.convocurrency.util.AppConstants
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 
-class AllCurrenciesViewModel : BaseObservable() {
+class ConvertCurrenciesViewModel(val actionCallback: ConvertCurrenciesFragment.ActionCallback) : BaseObservable() {
 
     private var emptyStateVisibility = View.GONE
     private var recyclerViewVisibility = View.GONE
     private lateinit var currencyViewModels : ArrayList<CurrencyViewModel>
+    private lateinit var conversionResult : String
 
-    private var allCurrenciesAdapter = MainActivity.AllCurrenciesAdapter()
+    private var allCurrenciesAdapter = AllCurrenciesAdapter()
 
     fun loadRemoteData() {
-        println("Load remote data initiated at: " + Calendar.getInstance())
         ApiServiceGenerator.createService(APIService::class.java).getAllCurrencies(AppConstants.CURRENCY_LAYER_API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ allCurrencies ->
-                    println("Load remote data finished at: " + Calendar.getInstance())
                     loadLocalData(allCurrencies.currencies)
-                }, { throwable ->
-                    println("Error: " + throwable.localizedMessage)
+                }, {
+                    loadLocalData(mapOf())
                 })
     }
 
@@ -36,8 +37,8 @@ class AllCurrenciesViewModel : BaseObservable() {
         currencyViewModels = ArrayList()
         allCurrenciesAdapter.clearItems()
         for ((key, value) in allCurrencies) {
-            currencyViewModels.add(CurrencyViewModel(key, value))
-            allCurrenciesAdapter.addItem(CurrencyViewModel(key, value))
+            currencyViewModels.add(CurrencyViewModel(key, value, actionCallback))
+            allCurrenciesAdapter.addItem(CurrencyViewModel(key, value, actionCallback))
         }
 
         if (currencyViewModels.isEmpty()) {
@@ -68,7 +69,12 @@ class AllCurrenciesViewModel : BaseObservable() {
     }
 
     @Bindable
-    fun getAdapter(): MainActivity.AllCurrenciesAdapter {
+    fun getConversionResult() : String {
+        return conversionResult
+    }
+
+    @Bindable
+    fun getAdapter(): AllCurrenciesAdapter {
         return allCurrenciesAdapter
     }
 }

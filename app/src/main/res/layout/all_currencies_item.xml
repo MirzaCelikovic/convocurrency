@@ -4,7 +4,11 @@
     <data>
         <variable
             name="data"
-            type="com.example.celik.convocurrency.ui.CurrencyViewModel"/>
+            type="com.example.celik.convocurrency.ui.viewmodels.CurrencyViewModel"/>
+
+        <variable
+            name="action"
+            type="com.example.celik.convocurrency.ui.fragments.ConvertCurrenciesFragment.ActionCallback"/>
     </data>
 
     <LinearLayout
@@ -12,7 +16,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="10dp"
-        android:weightSum="4">
+        android:weightSum="4"
+        android:onClick="@{() (action != null) -> action.onItemClick()}">
 
         <TextView
             android:layout_width="0dp"
