@@ -9,6 +9,7 @@ import com.example.celik.convocurrency.api.ApiServiceGenerator
 import com.example.celik.convocurrency.util.AppConstants
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 class AllCurrenciesViewModel : BaseObservable() {
 
@@ -16,13 +17,15 @@ class AllCurrenciesViewModel : BaseObservable() {
     private var recyclerViewVisibility = View.GONE
     private lateinit var currencyViewModels : ArrayList<CurrencyViewModel>
 
-    private var allCurrenciesAdapter : MainActivity.AllCurrenciesAdapter
+    private var allCurrenciesAdapter = MainActivity.AllCurrenciesAdapter()
 
     fun loadRemoteData() {
+        println("Load remote data initiated at: " + Calendar.getInstance())
         ApiServiceGenerator.createService(APIService::class.java).getAllCurrencies(AppConstants.CURRENCY_LAYER_API_KEY)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ allCurrencies ->
+                    println("Load remote data finished at: " + Calendar.getInstance())
                     loadLocalData(allCurrencies.currencies)
                 }, { throwable ->
                     println("Error: " + throwable.localizedMessage)
@@ -31,11 +34,12 @@ class AllCurrenciesViewModel : BaseObservable() {
 
     private fun loadLocalData(allCurrencies: Map<String, String>) {
         currencyViewModels = ArrayList()
+        allCurrenciesAdapter.clearItems()
         for ((key, value) in allCurrencies) {
             currencyViewModels.add(CurrencyViewModel(key, value))
+            allCurrenciesAdapter.addItem(CurrencyViewModel(key, value))
         }
-        allCurrenciesAdapter = MainActivity.AllCurrenciesAdapter(currencyViewModels)
-        allCurrenciesAdapter.notifyDataSetChanged()
+
         if (currencyViewModels.isEmpty()) {
             noData()
         } else {

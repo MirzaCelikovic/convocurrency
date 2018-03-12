@@ -2,13 +2,10 @@ package com.example.celik.convocurrency.ui
 
 import android.app.Activity
 import android.databinding.DataBindingUtil
-import android.databinding.ViewDataBinding
 import android.os.Bundle
-import com.example.celik.convocurrency.BR
 import com.example.celik.convocurrency.R
 import com.example.celik.convocurrency.databinding.ActivityMainBinding
-import com.example.celik.convocurrency.widget.BaseDataBoundAdapter
-import com.example.celik.convocurrency.widget.DataBoundViewHolder
+import com.example.celik.convocurrency.widget.MultiTypeDataBoundAdapter
 
 class MainActivity : Activity() {
 
@@ -22,19 +19,7 @@ class MainActivity : Activity() {
         binding.data  = allCurrenciesViewModel
     }
 
-    class AllCurrenciesAdapter(private val currencyViewModels: ArrayList<CurrencyViewModel>?) : BaseDataBoundAdapter<ViewDataBinding>() {
-
-        override fun bindItem(holder: DataBoundViewHolder<ViewDataBinding>?, position: Int, payloads: MutableList<Any>?) {
-            holder?.binding?.setVariable(BR.data, currencyViewModels?.get(position))
-        }
-
-        override fun getItemCount(): Int {
-            if (currencyViewModels?.size == null) {
-                return 0
-            }
-            return currencyViewModels.size
-        }
-
+    class AllCurrenciesAdapter : MultiTypeDataBoundAdapter() {
         override fun getItemLayoutId(position: Int): Int {
             return R.layout.all_currencies_item
         }
