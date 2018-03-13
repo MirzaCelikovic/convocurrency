@@ -13,6 +13,8 @@ import com.example.celik.convocurrency.ui.viewmodels.ConvertCurrenciesViewModel
 class ConvertCurrenciesFragment : Fragment() {
 
     private lateinit var convertCurrenciesViewModel : ConvertCurrenciesViewModel
+    private var fromCurrency : String = ""
+    private var toCurrency : String = ""
 
     companion object {
         fun getInstance() : ConvertCurrenciesFragment {
@@ -21,12 +23,20 @@ class ConvertCurrenciesFragment : Fragment() {
     }
 
     interface ActionCallback {
-        fun onItemClick()
+        fun onItemClickFrom(currencyAbbreviationString: String)
+
+        fun onItemClickSecond(currencyAbbreviationString: String)
     }
 
-    val actionCallback = object : ActionCallback {
-        override fun onItemClick() {
+    private val actionCallback = object : ActionCallback {
+        override fun onItemClickFrom(currencyAbbreviationString: String) {
+            fromCurrency = currencyAbbreviationString
+            convertCurrenciesViewModel.setConversionItems(String.format(getString(R.string.fromXtoY), fromCurrency, ""), fromCurrency, "")
+        }
 
+        override fun onItemClickSecond(currencyAbbreviationString: String) {
+            toCurrency = currencyAbbreviationString
+            convertCurrenciesViewModel.setConversionItems(String.format(getString(R.string.fromXtoY), fromCurrency, toCurrency), fromCurrency, toCurrency)
         }
     }
 

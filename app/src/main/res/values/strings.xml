@@ -7,6 +7,9 @@
     <string name="currencies_converter">Currencies Converter</string>
     <string name="from">FROM</string>
     <string name="to">TO</string>
+    <string name="fromXtoY">%1$s -> %2$s</string>
     <string name="conversion_result">%1$s %2$s = %3$s %4$s</string>
+    <string name="amount">amount</string>
+    <string name="convert">CONVERT</string>
 
 </resources>

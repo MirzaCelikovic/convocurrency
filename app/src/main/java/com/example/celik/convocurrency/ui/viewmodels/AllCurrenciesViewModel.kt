@@ -6,8 +6,8 @@ import android.view.View
 import com.example.celik.convocurrency.BR
 import com.example.celik.convocurrency.api.APIService
 import com.example.celik.convocurrency.api.ApiServiceGenerator
+import com.example.celik.convocurrency.model.AllCurrencies
 import com.example.celik.convocurrency.ui.adapters.AllCurrenciesAdapter
-import com.example.celik.convocurrency.util.AppConstants
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.*
@@ -21,22 +21,22 @@ class AllCurrenciesViewModel : BaseObservable() {
     private var allCurrenciesAdapter = AllCurrenciesAdapter()
 
     fun loadRemoteData() {
-        ApiServiceGenerator.createService(APIService::class.java).getAllCurrencies(AppConstants.CURRENCY_LAYER_API_KEY)
+        ApiServiceGenerator.createService(APIService::class.java).getAllCurrencies()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ allCurrencies ->
-                    loadLocalData(allCurrencies.currencies)
+                    loadLocalData(allCurrencies)
                 }, {
-                    loadLocalData(mapOf())
+                    loadLocalData(AllCurrencies(mapOf()))
                 })
     }
 
-    private fun loadLocalData(allCurrencies: Map<String, String>) {
+    private fun loadLocalData(allCurrencies: AllCurrencies) {
         currencyViewModels = ArrayList()
         allCurrenciesAdapter.clearItems()
-        for ((key, value) in allCurrencies) {
-            currencyViewModels.add(CurrencyViewModel(key, value, null))
-            allCurrenciesAdapter.addItem(CurrencyViewModel(key, value, null))
+        for ((key, value) in allCurrencies.results) {
+            currencyViewModels.add(CurrencyViewModel(key, value.currencyName, null, false))
+            allCurrenciesAdapter.addItem(CurrencyViewModel(key, value.currencyName, null, false))
         }
 
         if (currencyViewModels.isEmpty()) {

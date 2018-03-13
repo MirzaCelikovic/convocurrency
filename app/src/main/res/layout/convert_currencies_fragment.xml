@@ -54,7 +54,7 @@
                 android:layout_weight="3"
                 android:background="@android:color/transparent"
                 android:scrollbars="vertical"
-                app:adapter="@{data.adapter}"
+                app:adapter="@{data.fromAdapter}"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
             <TextView
@@ -75,26 +75,50 @@
                 android:background="@android:color/transparent"
                 android:paddingTop="5dp"
                 android:scrollbars="vertical"
-                app:adapter="@{data.adapter}"
+                app:adapter="@{data.toAdapter}"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="2"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="20dp"
+                    android:layout_gravity="center"
+                    android:inputType="numberDecimal"
+                    android:hint="@string/amount"
+                    android:gravity="center"
+                    android:text="@={data.amount}"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:padding="10dp"
                     android:paddingTop="10dp"
-                    android:text="@{data.conversionResult}"
+                    android:text="@{data.conversionItems}"
                     android:textColor="@color/white"
-                    android:layout_centerInParent="true"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:layout_weight="1"/>
 
-            </RelativeLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:padding="10dp"
+                    android:paddingTop="10dp"
+                    android:text="@string/convert"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:layout_weight="1"
+                    android:onClick="@{() -> data.convertValues()}"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

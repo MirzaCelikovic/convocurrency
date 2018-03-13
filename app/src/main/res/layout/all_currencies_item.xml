@@ -17,7 +17,7 @@
         android:orientation="horizontal"
         android:padding="10dp"
         android:weightSum="4"
-        android:onClick="@{() (action != null) -> action.onItemClick()}">
+        android:onClick="@{data.onItemClick()}">
 
         <TextView
             android:layout_width="0dp"
