@@ -1,7 +1,5 @@
 package com.example.celik.convocurrency.ui.activities
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Intent
@@ -9,41 +7,66 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.celik.convocurrency.R
+import com.example.celik.convocurrency.api.APIService
+import com.example.celik.convocurrency.api.ApiServiceGenerator
+import com.example.celik.convocurrency.database.AppDatabase
+import com.example.celik.convocurrency.model.AllCurrencies
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class SplashActivity : Activity() {
-
+    private var appDatabase: AppDatabase? = null
     private var splashImage: ImageView? = null
     private var splashText: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        appDatabase = AppDatabase.getInstance(this)
 
         splashImage = findViewById(R.id.app_image)
         splashText = findViewById(R.id.app_name)
 
+        loadRemoteData()
+
         ValueAnimator.ofFloat(0f, 300f).apply {
-            duration = 1700
+            duration = 1000
+            repeatCount = ValueAnimator.INFINITE
             addUpdateListener {
-                splashImage?.x = it.animatedValue as Float
-                splashText?.y = interpolate(-1000f, 1100f, it.animatedFraction)
+                splashImage?.rotation = it.animatedValue as Float
             }
             start()
-
-            addListener(object: AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    splashImage?.postDelayed({
-                        showMainActivity()
-                    }, 500)
-                }
-            })
         }
     }
 
-    private fun interpolate(fl: Float, fl1: Float, animatedFraction: Float)
-            = fl + animatedFraction * (fl1 - fl)
+    private fun loadRemoteData() {
+        ApiServiceGenerator.createService(APIService::class.java).getAllCurrencies()
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    Observable.just {
+                        saveIntoDatabase(it)
+                    }
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe {
+                                showMainActivity()
+                            }
+                }
+    }
+
+    private fun saveIntoDatabase(allCurrencies: AllCurrencies?) {
+        if (allCurrencies == null) {
+            return
+        }
+
+        for (currency in allCurrencies.results) {
+            appDatabase?.allCurrenciesDao()?.insertAll(currency)
+        }
+    }
 
     private fun showMainActivity() {
+        splashImage?.animation?.cancel()
         val intent = Intent(this@SplashActivity, MainActivity::class.java)
         startActivity(intent)
         finish()

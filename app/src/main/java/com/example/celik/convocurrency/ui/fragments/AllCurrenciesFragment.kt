@@ -23,8 +23,8 @@ class AllCurrenciesFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding : AllCurrenciesFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.all_currencies_fragment, container, false)
-        allCurrenciesViewModel = AllCurrenciesViewModel()
-        allCurrenciesViewModel.loadRemoteData()
+        allCurrenciesViewModel = AllCurrenciesViewModel(context)
+        allCurrenciesViewModel.loadLocalData()
         binding.data = allCurrenciesViewModel
 
         return binding.root

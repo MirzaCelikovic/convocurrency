@@ -1,4 +1,4 @@
-package com.example.celik.convocurrency.model.deserializers
+package com.example.celik.convocurrency.deserializers
 
 import com.example.celik.convocurrency.model.AllCurrencies
 import com.example.celik.convocurrency.model.Currency
@@ -17,21 +17,19 @@ class CurrencyDeserializer : JsonDeserializer<AllCurrencies> {
         return AllCurrencies(results = parameters)
     }
 
-    private fun readParametersMapFromJson(jsonObject: JsonObject?): Map<String, Currency> {
-        val parameters = hashMapOf<String, Currency>()
+    private fun readParametersMapFromJson(jsonObject: JsonObject?): List<Currency> {
+        val parameters = ArrayList<Currency>()
         val mainObject = jsonObject?.get("results")?.asJsonObject
-        for (entry in mainObject?.entrySet()!!
-        ) {
-            val key = entry.key
+        for (entry in mainObject?.entrySet()!!) {
             val currencyParams = entry.value.asJsonObject
             val currencyName = currencyParams.get(AppConstants.CURRENCY_NAME).asString
             val currencySymbol = currencyParams.get(AppConstants.CURRENCY_NAME).asString
             val id = currencyParams.get(AppConstants.ID).asString
-            var currency = Currency(currencyName = currencyName, currencySymbol = currencySymbol, id = id)
+            val currency = Currency(currencyName = currencyName, currencySymbol = currencySymbol, id = id)
             parameters.apply {
-                put(key, currency)
+                add(currency)
             }
         }
-        return parameters.toSortedMap()
+        return parameters.sortedWith(compareBy { it.currencyName })
     }
 }

@@ -2,8 +2,8 @@ package com.example.celik.convocurrency.api
 
 import com.example.celik.convocurrency.model.AllCurrencies
 import com.example.celik.convocurrency.model.ConvertedCurrency
-import com.example.celik.convocurrency.model.deserializers.ConverterDeserializer
-import com.example.celik.convocurrency.model.deserializers.CurrencyDeserializer
+import com.example.celik.convocurrency.deserializers.ConverterDeserializer
+import com.example.celik.convocurrency.deserializers.CurrencyDeserializer
 import com.example.celik.convocurrency.util.AppConstants
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient

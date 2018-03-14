@@ -1,42 +1,39 @@
 package com.example.celik.convocurrency.ui.viewmodels
 
+import android.content.Context
 import android.databinding.BaseObservable
 import android.databinding.Bindable
 import android.view.View
 import com.example.celik.convocurrency.BR
-import com.example.celik.convocurrency.api.APIService
-import com.example.celik.convocurrency.api.ApiServiceGenerator
-import com.example.celik.convocurrency.model.AllCurrencies
+import com.example.celik.convocurrency.database.AppDatabase
+import com.example.celik.convocurrency.model.Currency
 import com.example.celik.convocurrency.ui.adapters.AllCurrenciesAdapter
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 
-class AllCurrenciesViewModel : BaseObservable() {
-
+class AllCurrenciesViewModel(val context: Context) : BaseObservable() {
+    private var appDatabase: AppDatabase? = null
     private var emptyStateVisibility = View.GONE
     private var recyclerViewVisibility = View.GONE
     private lateinit var currencyViewModels : ArrayList<CurrencyViewModel>
 
     private var allCurrenciesAdapter = AllCurrenciesAdapter()
 
-    fun loadRemoteData() {
-        ApiServiceGenerator.createService(APIService::class.java).getAllCurrencies()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ allCurrencies ->
-                    loadLocalData(allCurrencies)
-                }, {
-                    loadLocalData(AllCurrencies(mapOf()))
-                })
+    public fun loadLocalData() {
+        if (context == null) {
+            return
+        }
+        appDatabase = AppDatabase.getInstance(context.applicationContext)
+        
     }
 
-    private fun loadLocalData(allCurrencies: AllCurrencies) {
+    private fun loadData(allCurrencies : List<Currency>?) {
         currencyViewModels = ArrayList()
         allCurrenciesAdapter.clearItems()
-        for ((key, value) in allCurrencies.results) {
-            currencyViewModels.add(CurrencyViewModel(key, value.currencyName, null, false))
-            allCurrenciesAdapter.addItem(CurrencyViewModel(key, value.currencyName, null, false))
+        if (allCurrencies != null) {
+            for (currency in allCurrencies) {
+                currencyViewModels.add(CurrencyViewModel(currency.id, currency.currencyName, null, false))
+                allCurrenciesAdapter.addItem(CurrencyViewModel(currency.id, currency.currencyName, null, false))
+            }
         }
 
         if (currencyViewModels.isEmpty()) {

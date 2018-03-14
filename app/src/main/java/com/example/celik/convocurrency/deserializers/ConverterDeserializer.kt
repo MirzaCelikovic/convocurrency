@@ -1,4 +1,4 @@
-package com.example.celik.convocurrency.model.deserializers
+package com.example.celik.convocurrency.deserializers
 
 import com.example.celik.convocurrency.model.Conversion
 import com.example.celik.convocurrency.model.ConvertedCurrency

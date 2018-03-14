@@ -35,17 +35,17 @@ class ConvertCurrenciesViewModel(private val actionCallback: ConvertCurrenciesFr
                     loadLocalDataFrom(allCurrencies)
                     loadLocalDataTo(allCurrencies)
                 }, {
-                    loadLocalDataFrom(AllCurrencies(mapOf()))
-                    loadLocalDataTo(AllCurrencies(mapOf()))
+                    loadLocalDataFrom(AllCurrencies(ArrayList()))
+                    loadLocalDataTo(AllCurrencies(ArrayList()))
                 })
     }
 
     private fun loadLocalDataFrom(allCurrencies: AllCurrencies) {
         currencyViewModels = ArrayList()
         fromAdapter.clearItems()
-        for ((key, value) in allCurrencies.results) {
-            currencyViewModels.add(CurrencyViewModel(key, value.currencyName, actionCallback, true))
-            fromAdapter.addItem(CurrencyViewModel(key, value.currencyName, actionCallback, true))
+        for (value in allCurrencies.results) {
+            currencyViewModels.add(CurrencyViewModel(value.id, value.currencyName, actionCallback, true))
+            fromAdapter.addItem(CurrencyViewModel(value.id, value.currencyName, actionCallback, true))
         }
 
         if (currencyViewModels.isEmpty()) {
@@ -61,9 +61,9 @@ class ConvertCurrenciesViewModel(private val actionCallback: ConvertCurrenciesFr
     private fun loadLocalDataTo(allCurrencies: AllCurrencies) {
         currencyViewModels = ArrayList()
         toAdapter.clearItems()
-        for ((key, value) in allCurrencies.results) {
-            currencyViewModels.add(CurrencyViewModel(key, value.currencyName, actionCallback, false))
-            toAdapter.addItem(CurrencyViewModel(key, value.currencyName, actionCallback, false))
+        for (value in allCurrencies.results) {
+            currencyViewModels.add(CurrencyViewModel(value.id, value.currencyName, actionCallback, false))
+            toAdapter.addItem(CurrencyViewModel(value.id, value.currencyName, actionCallback, false))
         }
 
         if (currencyViewModels.isEmpty()) {
