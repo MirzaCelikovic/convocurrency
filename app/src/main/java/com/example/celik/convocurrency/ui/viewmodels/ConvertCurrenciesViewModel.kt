@@ -1,20 +1,24 @@
 package com.example.celik.convocurrency.ui.viewmodels
 
+import android.content.Context
 import android.databinding.BaseObservable
 import android.databinding.Bindable
 import android.view.View
 import com.example.celik.convocurrency.BR
 import com.example.celik.convocurrency.api.APIService
 import com.example.celik.convocurrency.api.ApiServiceGenerator
-import com.example.celik.convocurrency.model.AllCurrencies
+import com.example.celik.convocurrency.database.AppDatabase
+import com.example.celik.convocurrency.model.Currency
 import com.example.celik.convocurrency.ui.adapters.AllCurrenciesAdapter
 import com.example.celik.convocurrency.ui.fragments.ConvertCurrenciesFragment
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 
-class ConvertCurrenciesViewModel(private val actionCallback: ConvertCurrenciesFragment.ActionCallback) : BaseObservable() {
-
+class ConvertCurrenciesViewModel(val context: Context, private val actionCallback: ConvertCurrenciesFragment.ActionCallback) : BaseObservable() {
+    private var appDatabase: AppDatabase? = null
     private var emptyStateVisibility = View.GONE
     private var recyclerViewVisibility = View.GONE
     private lateinit var currencyViewModels: ArrayList<CurrencyViewModel>
@@ -28,22 +32,26 @@ class ConvertCurrenciesViewModel(private val actionCallback: ConvertCurrenciesFr
     private var amount : String = ""
 
     fun loadRemoteData() {
-        ApiServiceGenerator.createService(APIService::class.java).getAllCurrencies()
-                .subscribeOn(Schedulers.newThread())
+        appDatabase = AppDatabase.getInstance(context.applicationContext)
+
+        Observable.create(ObservableOnSubscribe<List<Currency>> {
+            emitter -> emitter.onNext(appDatabase?.allCurrenciesDao()?.getAllCurrencies())
+        })
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ allCurrencies ->
-                    loadLocalDataFrom(allCurrencies)
-                    loadLocalDataTo(allCurrencies)
-                }, {
-                    loadLocalDataFrom(AllCurrencies(ArrayList()))
-                    loadLocalDataTo(AllCurrencies(ArrayList()))
-                })
+                .subscribe {
+                    result ->
+                    run {
+                        loadLocalDataFrom(result)
+                        loadLocalDataTo(result)
+                    }
+                }
     }
 
-    private fun loadLocalDataFrom(allCurrencies: AllCurrencies) {
+    private fun loadLocalDataFrom(allCurrencies: List<Currency>) {
         currencyViewModels = ArrayList()
         fromAdapter.clearItems()
-        for (value in allCurrencies.results) {
+        for (value in allCurrencies) {
             currencyViewModels.add(CurrencyViewModel(value.id, value.currencyName, actionCallback, true))
             fromAdapter.addItem(CurrencyViewModel(value.id, value.currencyName, actionCallback, true))
         }
@@ -58,10 +66,10 @@ class ConvertCurrenciesViewModel(private val actionCallback: ConvertCurrenciesFr
         }
     }
 
-    private fun loadLocalDataTo(allCurrencies: AllCurrencies) {
+    private fun loadLocalDataTo(allCurrencies: List<Currency>) {
         currencyViewModels = ArrayList()
         toAdapter.clearItems()
-        for (value in allCurrencies.results) {
+        for (value in allCurrencies) {
             currencyViewModels.add(CurrencyViewModel(value.id, value.currencyName, actionCallback, false))
             toAdapter.addItem(CurrencyViewModel(value.id, value.currencyName, actionCallback, false))
         }

@@ -12,6 +12,7 @@ import com.example.celik.convocurrency.api.ApiServiceGenerator
 import com.example.celik.convocurrency.database.AppDatabase
 import com.example.celik.convocurrency.model.AllCurrencies
 import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -43,19 +44,26 @@ class SplashActivity : Activity() {
     private fun loadRemoteData() {
         ApiServiceGenerator.createService(APIService::class.java).getAllCurrencies()
                 .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe {
-                    Observable.just {
-                        saveIntoDatabase(it)
-                    }
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe {
-                                showMainActivity()
-                            }
+                .subscribe { result ->
+                    saveIntoDatabase(result)
                 }
     }
 
     private fun saveIntoDatabase(allCurrencies: AllCurrencies?) {
+        Observable.create(ObservableOnSubscribe<Unit> {
+            emitter -> emitter.onNext(save(allCurrencies))
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    showMainActivity()
+                }
+
+    }
+
+    private fun save(allCurrencies: AllCurrencies?) {
         if (allCurrencies == null) {
             return
         }

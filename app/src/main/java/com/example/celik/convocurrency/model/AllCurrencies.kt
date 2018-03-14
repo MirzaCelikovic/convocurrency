@@ -12,8 +12,10 @@ data class AllCurrencies (
 
 @Entity
 data class Currency (
-        val currencyName : String,
-        val currencySymbol : String,
-        @PrimaryKey
-        val id : String
-)
+        var currencyName : String,
+        var currencySymbol : String,
+        var id : String
+) {
+    @PrimaryKey(autoGenerate = false)
+    var generatedId : Int? = null
+}

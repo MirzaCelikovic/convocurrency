@@ -8,6 +8,10 @@ import com.example.celik.convocurrency.BR
 import com.example.celik.convocurrency.database.AppDatabase
 import com.example.celik.convocurrency.model.Currency
 import com.example.celik.convocurrency.ui.adapters.AllCurrenciesAdapter
+import io.reactivex.Observable
+import io.reactivex.ObservableOnSubscribe
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 class AllCurrenciesViewModel(val context: Context) : BaseObservable() {
@@ -18,22 +22,26 @@ class AllCurrenciesViewModel(val context: Context) : BaseObservable() {
 
     private var allCurrenciesAdapter = AllCurrenciesAdapter()
 
-    public fun loadLocalData() {
-        if (context == null) {
-            return
-        }
+    fun loadDataFromDatabase() {
         appDatabase = AppDatabase.getInstance(context.applicationContext)
-        
+
+        Observable.create(ObservableOnSubscribe<List<Currency>> {
+            emitter -> emitter.onNext(appDatabase?.allCurrenciesDao()?.getAllCurrencies())
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    result -> loadLocalData(result)
+                }
+
     }
 
-    private fun loadData(allCurrencies : List<Currency>?) {
+    private fun loadLocalData(allCurrencies: List<Currency>) {
         currencyViewModels = ArrayList()
         allCurrenciesAdapter.clearItems()
-        if (allCurrencies != null) {
-            for (currency in allCurrencies) {
-                currencyViewModels.add(CurrencyViewModel(currency.id, currency.currencyName, null, false))
-                allCurrenciesAdapter.addItem(CurrencyViewModel(currency.id, currency.currencyName, null, false))
-            }
+        for (currency in allCurrencies) {
+            currencyViewModels.add(CurrencyViewModel(currency.id, currency.currencyName, null, false))
+            allCurrenciesAdapter.addItem(CurrencyViewModel(currency.id, currency.currencyName, null, false))
         }
 
         if (currencyViewModels.isEmpty()) {
@@ -44,6 +52,8 @@ class AllCurrenciesViewModel(val context: Context) : BaseObservable() {
             notifyPropertyChanged(BR.emptyStateVisible)
             notifyPropertyChanged(BR.recyclerViewVisible)
         }
+
+        
     }
 
     private fun noData() {

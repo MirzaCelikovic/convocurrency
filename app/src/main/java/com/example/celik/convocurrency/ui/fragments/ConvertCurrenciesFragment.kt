@@ -42,7 +42,7 @@ class ConvertCurrenciesFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding : ConvertCurrenciesFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.convert_currencies_fragment, container, false)
-        convertCurrenciesViewModel = ConvertCurrenciesViewModel(actionCallback)
+        convertCurrenciesViewModel = ConvertCurrenciesViewModel(context, actionCallback)
         convertCurrenciesViewModel.loadRemoteData()
         binding.data = convertCurrenciesViewModel
 
