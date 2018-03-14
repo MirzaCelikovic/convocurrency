@@ -18,12 +18,11 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-//    override fun onBackPressed() {
-//        val mainFragment = supportFragmentManager.findFragmentByTag("MainFragment") as MainFragment
-//        if (MainFragment.menuShown) {
-//            super.onBackPressed()
-//            return
-//        }
-//        mainFragment.showMenu()
-//    }
+    override fun onBackPressed() {
+        val mainFragment = supportFragmentManager.findFragmentByTag("MainFragment") as MainFragment
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            supportFragmentManager.popBackStack()
+            mainFragment.showMenu()
+        }
+    }
 }

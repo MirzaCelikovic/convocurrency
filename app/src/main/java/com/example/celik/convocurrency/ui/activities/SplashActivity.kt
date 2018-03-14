@@ -69,7 +69,7 @@ class SplashActivity : Activity() {
         }
 
         for (currency in allCurrencies.results) {
-            appDatabase?.allCurrenciesDao()?.insertAll(currency)
+            appDatabase?.allCurrenciesDao()?.insert(currency)
         }
     }
 

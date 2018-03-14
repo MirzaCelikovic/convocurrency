@@ -105,6 +105,4 @@ class MainFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
     }
-
-
 }
