@@ -20,9 +20,18 @@ class MainActivity : FragmentActivity() {
 
     override fun onBackPressed() {
         val mainFragment = supportFragmentManager.findFragmentByTag("MainFragment") as MainFragment
-        if (supportFragmentManager.backStackEntryCount > 1) {
-            supportFragmentManager.popBackStack()
-            mainFragment.showMenu()
+        when (supportFragmentManager.backStackEntryCount) {
+            1 -> {
+                supportFragmentManager.popBackStack()
+                super.onBackPressed()
+            }
+
+            2 -> {
+                supportFragmentManager.popBackStack()
+                mainFragment.showMenu()
+            }
         }
+
+
     }
 }

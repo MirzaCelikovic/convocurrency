@@ -22,8 +22,6 @@ class MainFragment : Fragment() {
         fun getInstance() : MainFragment {
             return MainFragment()
         }
-
-        var menuShown = false
     }
 
     private lateinit var topView : RelativeLayout
@@ -65,9 +63,7 @@ class MainFragment : Fragment() {
 
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    menuShown = from.contentEquals("menu")
                     when (from) {
-                        "menu" -> menuShown = true
                         "top" -> showConvertCurrenciesFragment()
                         "bottom" -> showAllCurrenciesFragment()
                     }

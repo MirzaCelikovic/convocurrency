@@ -40,8 +40,8 @@ class AllCurrenciesViewModel(val context: Context) : BaseObservable() {
         currencyViewModels = ArrayList()
         allCurrenciesAdapter.clearItems()
         for (currency in allCurrencies) {
-            currencyViewModels.add(CurrencyViewModel(currency.id, currency.currencyName, null, false))
-            allCurrenciesAdapter.addItem(CurrencyViewModel(currency.id, currency.currencyName, null, false))
+            currencyViewModels.add(CurrencyViewModel(currency, null, false))
+            allCurrenciesAdapter.addItem(CurrencyViewModel(currency, null, false))
         }
 
         if (currencyViewModels.isEmpty()) {

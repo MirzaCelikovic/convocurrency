@@ -52,8 +52,8 @@ class ConvertCurrenciesViewModel(val context: Context, private val actionCallbac
         currencyViewModels = ArrayList()
         fromAdapter.clearItems()
         for (value in allCurrencies) {
-            currencyViewModels.add(CurrencyViewModel(value.id, value.currencyName, actionCallback, true))
-            fromAdapter.addItem(CurrencyViewModel(value.id, value.currencyName, actionCallback, true))
+            currencyViewModels.add(CurrencyViewModel(value, actionCallback, true))
+            fromAdapter.addItem(CurrencyViewModel(value, actionCallback, true))
         }
 
         if (currencyViewModels.isEmpty()) {
@@ -70,8 +70,8 @@ class ConvertCurrenciesViewModel(val context: Context, private val actionCallbac
         currencyViewModels = ArrayList()
         toAdapter.clearItems()
         for (value in allCurrencies) {
-            currencyViewModels.add(CurrencyViewModel(value.id, value.currencyName, actionCallback, false))
-            toAdapter.addItem(CurrencyViewModel(value.id, value.currencyName, actionCallback, false))
+            currencyViewModels.add(CurrencyViewModel(value, actionCallback, false))
+            toAdapter.addItem(CurrencyViewModel(value, actionCallback, false))
         }
 
         if (currencyViewModels.isEmpty()) {

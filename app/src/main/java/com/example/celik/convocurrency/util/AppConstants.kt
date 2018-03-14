@@ -7,6 +7,7 @@ class AppConstants {
         const val BASE_URL = "https://free.currencyconverterapi.com/api/"
 
         const val CURRENCY_NAME = "currencyName"
+        const val CURRENCY_SYMBOL = "currencySymbol"
         const val ID = "id"
     }
 }

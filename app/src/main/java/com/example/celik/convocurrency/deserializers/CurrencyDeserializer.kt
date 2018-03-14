@@ -23,7 +23,10 @@ class CurrencyDeserializer : JsonDeserializer<AllCurrencies> {
         for (entry in mainObject?.entrySet()!!) {
             val currencyParams = entry.value.asJsonObject
             val currencyName = currencyParams.get(AppConstants.CURRENCY_NAME).asString
-            val currencySymbol = currencyParams.get(AppConstants.CURRENCY_NAME).asString
+            var currencySymbol = currencyParams.get(AppConstants.CURRENCY_SYMBOL)?.asString
+            if (currencySymbol == null) {
+                currencySymbol = "N/A"
+            }
             val id = currencyParams.get(AppConstants.ID).asString
             val currency = Currency(currencyName = currencyName, currencySymbol = currencySymbol, id = id)
             parameters.apply {
