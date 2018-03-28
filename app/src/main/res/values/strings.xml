@@ -11,5 +11,10 @@
     <string name="conversion_result">%1$s %2$s = %3$s %4$s</string>
     <string name="amount">amount</string>
     <string name="convert">CONVERT</string>
+    <string name="error_internet">Error communicating with the server</string>
+    <string name="check_connection">Please check your internet connection</string>
+    <string name="ok">OK</string>
+    <string name="currency_not_selected">Currency not selected</string>
+    <string name="select_currency">Please select currencies for conversion</string>
 
 </resources>

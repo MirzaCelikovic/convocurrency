@@ -1,23 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue_gaze"
-    tools:context="com.example.celik.convocurrency.ui.activities.MainActivity">
-
-    <TextView
-        android:id="@+id/app_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="25dp"
-        android:text="@string/app_name"
-        android:textStyle="bold"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/app_image"
-        android:textColor="@color/white"
-        android:textSize="32sp" />
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.celik.convocurrency.ui.activities.SplashActivity">
 
     <ImageView
         android:id="@+id/app_image"

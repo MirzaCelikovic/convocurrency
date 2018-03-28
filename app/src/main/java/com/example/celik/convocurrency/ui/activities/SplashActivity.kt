@@ -1,11 +1,13 @@
 package com.example.celik.convocurrency.ui.activities
 
-import android.animation.ValueAnimator
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.animation.Animation
+import android.view.animation.LinearInterpolator
+import android.view.animation.RotateAnimation
 import android.widget.ImageView
-import android.widget.TextView
 import com.example.celik.convocurrency.R
 import com.example.celik.convocurrency.api.APIService
 import com.example.celik.convocurrency.api.ApiServiceGenerator
@@ -19,7 +21,6 @@ import io.reactivex.schedulers.Schedulers
 class SplashActivity : Activity() {
     private var appDatabase: AppDatabase? = null
     private var splashImage: ImageView? = null
-    private var splashText: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,28 +28,36 @@ class SplashActivity : Activity() {
         appDatabase = AppDatabase.getInstance(this)
 
         splashImage = findViewById(R.id.app_image)
-        splashText = findViewById(R.id.app_name)
 
         loadRemoteData()
 
-        ValueAnimator.ofFloat(0f, 300f).apply {
-            duration = 1000
-            repeatCount = ValueAnimator.INFINITE
-            addUpdateListener {
-                splashImage?.rotation = it.animatedValue as Float
-            }
-            start()
-        }
+        val rotateAnimation = RotateAnimation(360.0f, 0.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f)
+        rotateAnimation.fillAfter = true
+        rotateAnimation.duration = 1000
+        rotateAnimation.repeatCount = Animation.INFINITE
+        rotateAnimation.interpolator = LinearInterpolator()
+        rotateAnimation.start()
+        splashImage?.animation = rotateAnimation
     }
 
     private fun loadRemoteData() {
         ApiServiceGenerator.createService(APIService::class.java).getAllCurrencies()
                 .subscribeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe { result ->
-                    saveIntoDatabase(result)
+                .doOnNext { result -> saveIntoDatabase(result) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                }, {
+                    val dialogBuilder = AlertDialog.Builder(this@SplashActivity)
+                    dialogBuilder.setTitle(getString(R.string.error_internet))
+                    dialogBuilder.setMessage(getString(R.string.check_connection))
+                    dialogBuilder.setNeutralButton(getString(R.string.ok), { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                        showMainActivity()
+                    })
+                    dialogBuilder.show()
                 }
+                )
     }
 
     private fun saveIntoDatabase(allCurrencies: AllCurrencies?) {
